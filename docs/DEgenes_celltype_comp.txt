@@ -1,0 +1,15 @@
+Type	DEs	Cells
+Alpha	4203	74812
+Prolif. Alpha	1001	725
+Beta	5136	99029
+Gamma	2020	4347
+Delta	2903	10770
+Epsilon	380	179
+Ductal	3236	24290
+Acinar	3098	13400
+Stellate	2613	10874
+Act.Stellate	1939	904
+Immune	2141	1505
+Mast	368	350
+Schwann	466	310
+Endothelial	2338	4383

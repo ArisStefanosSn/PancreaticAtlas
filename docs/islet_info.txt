@@ -1,0 +1,49 @@
+Islet	Sex	BMI	Race	HbA1c	Age	Viability	Purity	Chemistry	Center	Medication	COD	Condition
+Islet123	F	28.3	H	4.6	60	95	90	V3	Scharp-Lacy	NA	Head trauma	ND
+Islet42	M	27.2	W	4.7	66	95	95	V3	Scharp-Lacy	NA	Cerebrovascular/stroke	ND
+Islet47	F	22.7	W	4.8	53	95	90	V3	Scharp-Lacy	NA	Cerebrovascular/stroke	ND
+Islet29	M	35.6	W	5.1	54	95	80	V2	Wisconsin	NA	Cerebrovascular/stroke	ND
+Islet45	F	24.6	W	5.1	50	91	90	V3	Miami	NA	Cerebrovascular/stroke	ND
+Islet68	M	29	W	5.1	52	98	95	V3	Wisconsin	NA	Head trauma	ND
+Islet104	M	20.2	AA	5.2	48	95	95	V3	Scharp-Lacy	NA	Cerebrovascular/stroke	ND
+Islet107	M	24.2	H	5.2	26	95	98	V3	Scharp-Lacy	NA	Head trauma	ND
+Islet37	M	28.5	W	5.2	32	95	95	V2	NA	NA	head trauma - gunshot wound/suicide	ND
+Islet34	M	25.3	H	5.3	40	95	93	V2	Scharp-Lacy	NA	Head trauma	ND
+Islet38	M	27.3	H	5.4	21	95	85	V2	Scharp-Lacy	NA	Head trauma	ND
+Islet57	F	33.4	W	5.4	35	95	95	V3	Scharp-Lacy	NA	Cerebrovascular/stroke	ND
+Islet59	M	38.8	W	5.4	48	98	90	V3	Wisconsin	NA	Cerebrovascular/stroke	ND
+Islet54	M	24.2	H	5.5	37	96	85	V3	Southern California IsletCell Resource Center	NA	Head trauma	ND
+Islet61	F	40	W	5.5	53	98	95	V3	Wisconsin	NA	Cerebrovascular/stroke	ND
+Islet80	M	25	AA	5.5	42	90	90	V3	Miami	NA	Head trauma	ND
+Islet73	M	28.4	W	5.6	55	95	90	V3	Scharp-Lacy	NA	Cerebrovascular/stroke	ND
+Islet50	M	33.3	W	5.7	53	97	90	V3	Wisconsin	NA	Cerebrovascular/stroke	PD
+Islet58	M	26.7	H	5.7	51	96	85	V3	Southern California IsletCell Resource Center	NA	Anoxia	PD
+Islet70	F	32.9	W	5.7	57	96	85	V3	Southern California IsletCell Resource Center	NA	Cerebrovascular/stroke	PD
+Islet127	M	29.9	W	5.8	60	98	85	V3	UPenn	NA	Anoxia	PD
+Islet53	M	32	H	5.8	62	95	85	V3	Scharp-Lacy	NA	cerebrovascular/stroke	PD
+Islet62	M	32.6	AA	5.8	45	95	90	V3	Scharp-Lacy	NA	Anoxia	PD
+Islet89	F	27.1	H	5.8	30	90	90	V3	Miami	NA	Anoxia	PD
+Islet101	M	25.7	W	5.9	48	95	95	V3	Scharp-Lacy	NA	Anoxia	PD
+Islet118	M	31.6	W	5.9	25	95	85	V3	Scharp-Lacy	NA	Head trauma	PD
+Islet63	M	28.4	AA	5.9	49	95	85	V3	Scharp-Lacy	NA	Anoxia	PD
+Islet40	F	30	H	6	53	97	85	V2	Southern California IsletCell Resource Center	NA	Cerebrovascular/stroke	PD
+Islet55	M	32.8	H	6	50	95	90	V3	Scharp-Lacy	NA	Anoxia	PD
+Islet85	M	26.6	H	6.1	58	90	90	V3	Miami	NA	NA	PD
+Islet56	F	39.8	W	6.4	52	98	92	V3	Wisconsin	NA	Anoxia	PD
+Islet71	M	31.7	W	5.9	63	95	85	V3	Scharp-Lacy	Metformin(5yrs)	Cerebrovascular/stroke	T2D
+Islet84	M	24.7	H	6.1	52	95	85	V3	Scharp-Lacy	Metformin (6yrs)	NA	T2D
+Islet32	M	27.7	W	6.3	35	95	85	V2	Scharp-Lacy	Metformin(3yrs)	Cerebrovascular/stroke	T2D
+Islet31	M	27.7	H	6.5	59	85	95	V2	Scharp-Lacy	Metformin(6yrs)	Cerebrovascular/stroke	T2D
+Islet30	F	42.8	H	6.6	52	95	95	V2	Scharp-Lacy	NR	Cerebrovascular/stroke	T2D
+Islet60	M	32.5	W	6.7	58	95	85	V3	Scharp-Lacy	Metformin(2yrs)	Cerebrovascular/stroke	T2D
+Islet91	M	25.8	W	6.7	53	95	85	V3	Scharp-Lacy	NR	Anoxia	T2D
+Islet126	F	43.9	AA	7	38	94	80	V3	UPenn	NR	Anoxia	T2D
+Islet28	M	35.6	H	7.1	51	90	95	V2	Scharp-Lacy	oral meds	Cerebrovascular/stroke	T2D
+Islet52	F	31.7	W	7.3	34	99	94	V3	Wisconsin	NR	cerebrovascular/stroke	T2D
+Islet128	M	41.3	H	7.5	60	96	80	V3	Southern California IsletCell Resource Center	NR	Cerebrovascular/stroke	T2D
+Islet119	F	28.5	AA	7.6	62	96	90	V3	Southern California IsletCell Resource Center	oral meds	NA	T2D
+Islet41	M	27.4	AA	7.9	61	NA	NA	V2	Scharp-Lacy	NR	NA	T2D
+Islet44	M	33.7	AA	8	54	94	90	V3	UPenn	NR	Cerebrovascular/stroke	T2D
+Islet33	F	38.1	W	8.2	37	94	85	V2	UPenn	oral meds	Cerebrovascular/stroke	T2D
+Islet39	F	35.4	W	9.9	50	96	80	V2	Southern California IsletCell Resource Center	Metformin	Cerebrovascular/stroke	T2D
+Islet48	F	33	H	13.1	37	92	85	V3	Scharp-Lacy	NR	Head trauma	T2D

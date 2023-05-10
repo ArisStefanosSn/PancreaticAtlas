@@ -1,0 +1,6 @@
+"","ID","Description","GeneRatio","BgRatio","pvalue","p.adjust","qvalue","geneID","Count"
+"GO:1900118","GO:1900118","negative regulation of execution phase of apoptosis","1/1","24/18866",0.00127212975723523,0.00512385596664185,NA,"MTRNR2L8",1
+"GO:1900117","GO:1900117","regulation of execution phase of apoptosis","1/1","41/18866",0.00217322166861034,0.00512385596664185,NA,"MTRNR2L8",1
+"GO:2000272","GO:2000272","negative regulation of signaling receptor activity","1/1","58/18866",0.00307431357998511,0.00512385596664185,NA,"MTRNR2L8",1
+"GO:0097194","GO:0097194","execution phase of apoptosis","1/1","95/18866",0.00503551362238963,0.00629439202798704,NA,"MTRNR2L8",1
+"GO:0010469","GO:0010469","regulation of signaling receptor activity","1/1","174/18866",0.00922294073995567,0.00922294073995567,NA,"MTRNR2L8",1

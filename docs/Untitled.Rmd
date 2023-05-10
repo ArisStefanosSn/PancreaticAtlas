@@ -1,0 +1,267 @@
+---
+title: Estimation of pathophysiological differences of pancreatic endocrine and exocrine
+  islet cell types in pre-diabetic and type 2 diabetic cells
+  
+author: Efthymios Motakis, Siddhi Nargund, Redwan Bhuiyan and Michael Stitzel
+
+date: "`r Sys.Date()`"
+
+output:
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,eval=TRUE}
+folder<-"~/Documents/Work/Stitzel_lab/Islet_sets/Rmarkdown/"
+suppressMessages(
+                source(paste(folder,"functions.R",sep=""))
+                )
+```
+
+```{r,pseudobulk1.4,eval=TRUE,echo=FALSE}
+# load the pseudobulk of all cells
+all.pseudodat<-readRDS(paste(folder,"AllPseudobulk.rds",sep=""))
+alpha<-readRDS(paste(folder,"AlphaPseudobulk.rds",sep=""))
+beta<-readRDS(paste(folder,"BetaPseudobulk.rds",sep=""))
+
+res1<-edgeR_fun(data=beta,cond.1="ND",cond.2="T2D",include.chemistry=TRUE)
+res2<-edgeR_fun(data=beta,cond.1="T2D",cond.2="PD",include.chemistry=FALSE)
+res3<-edgeR_fun(data=beta,cond.1="ND",cond.2="PD",include.chemistry=FALSE)
+res1$Comb<-apply(res1[,c(1,6)],1,paste,collapse=": FDR=")
+res1$Significance<-ifelse(res1$FDR<=0.05 & abs(res1$logFC)>=0.585,
+                          "Significant","Non-significant")
+res2$Comb<-apply(res2[,c(1,6)],1,paste,collapse=": FDR=")
+res2$Significance<-ifelse(res2$FDR<=0.05 & abs(res2$logFC)>=0.585,
+                          "Significant","Non-significant")
+res3$Comb<-apply(res3[,c(1,6)],1,paste,collapse=": FDR=")
+res3$Significance<-ifelse(res3$FDR<=0.05 & abs(res3$logFC)>=0.585,
+                          "Significant","Non-significant")
+
+```
+
+
+<p>&nbsp;</p>
+
+
+# 1. Introduction
+
+<div style="text-align: justify"> <div style="line-height: 2em"> This document describes the computational pipeline of the **Motakis et al. Estimation of pathophysiological differences of pancreatic endocrine and exocrine islet cell types in pre-diabetic and type 2 diabetic cells, submitted to ...,July 2022**.
+
+Pancreatic islet (dys)function is central to glucose homeostasis and type 2 diabetes pathophysiology. They consist of multiple cell types, including discrete endocrine cell types producing distinct hormones that together modulate glucose mobilization or disposal. Single cell transcriptome profiling (scRNA-seq) studies have dissected human islet cellular heterogeneity to define the molecular repertoire of each islet cell (sub)population. However, precise understanding of cell type-specific differences in healthy vs. disease states is lacking, due in part to the limited number of individuals or cells profiled for comparison. Here, we report a single cell transcriptome atlas of 245,878 islet cells obtained from 48 individuals, 17 non-diabetic (ND), 14 pre-diabetic (PD), and 17 type 2 diabetic (T2D) of matched sex, age, and ancestry. We identify marker genes that are robust across disease states for each of 14 cell types detected and observe a significant decrease in the number of beta cells sampled from T2D. Comparison of aggregated (pseudobulk) beta cell scRNA-seq profiles revealed 511 differentially expressed genes in T2D vs ND donors, including monogenic diabetes (e.g. HNF1A) and type 2 diabetes effectors (e.g. DGKB, ASCL2) genes. siRNA knockdown of XX/YY newly identified down-regulated genes that impair Beta cell viability or function. Finally, we describe 8 putative beta cell subpopulations, two of which significantly increase or decrease in T2D vs PD or ND donor islets, respectively. This study provides new and robust, cell type-resolved insights on the cellular and molecular changes in healthy vs diabetic human islets and represents a substantial resource to the islet biology and type 2 diabetes communities.
+
+The pipeline and methodology have been extensively discussed in the submitted manuscript. Here, we will show in detail the computational steps (R script, tables and plots) that generated the main findings and other supporting material. The reader can use our code to replicate the results and to explore other aspects of our data.
+
+The description of the data used in this manuscript can also be found at <https://github.com/ArisStefanosSn/Islets_Study>. The folder and functions below contain all necessary inforation  to replicate the results of this study. </div></div>
+
+```{r,eval=TRUE}
+folder<-"~/Documents/Work/Stitzel_lab/Islet_sets/Rmarkdown/"
+suppressMessages(
+                source(paste(folder,"functions.R",sep=""))
+                )
+```
+
+### 1.1. Single-cell Sequencing
+
+<div style="text-align: justify"> <div style="line-height: 2em"> Pancreatic islets were cultured using CMRL, supplemented with 10% FBS, 1% Glutamax,1% Pen/Strep for 14 days. Islet-derived fibroblasts were harvested and gDNA extracted using the Blood & Tissue kit (Qiagen). The RNAse A (Qiagen) treated genomic DNA samples were genotyped using the Infinium Global Diversity Array-8 v1.0 Kit (Illumina). 
+
+Single cell capture, barcoding and library preparation were performed using the 10X Chromium platform (https://www.10xgenomics.com) according to the manufacturer’s protocol for chemistries v2 (#CG00052) and v3 (#CG000183). Illumina base call files for all libraries were converted to FASTQs using CellRanger-6.1.2 demultiplexing and count pipelines (https://www.10xgenomics.com). Initially, we used cellranger’s mkfastq to demultiplex the raw base call (BCL) files generated by Illumina sequencers, perform adapter trimming and retrieve the 10-bp length UMI bases to be included into the generated FASTQ files for downstream processing. We loaded the FASTQs to STARsolo with STAR 2.7.9a and, using the v2 / v3 whitelists associated with cellranger v.6 installation, we aligned the reads onto the Ensembl human genome GRCh38 (https://uswest.ensembl.org/Homo_sapiens/Info/Index) for each of the Gel bead-in Emulsions (GEMs) of each library. We filtered out the empty droplets with STARsolo’s EmptyDrops_CR option keeping a median of 7748 cells across libraries for further analysis (25% - 75% IQR: 5891 - 9133). In total 414,082 cell-containing droplets were estimated. Our original target was to sequence 6,000 cells per library. The excess of droplet-containing cells estimated by STARsolo can be probably accounted as false positives whose amount, as the IQRs imply, was library dependent.</div></div>
+
+### 1.2. Experimental Design
+
+<div style="text-align: justify"> <div style="line-height: 2em"> We generated the single-cell RNA-seq data of 17 non-diabetic (ND), 14 prediabetic (PD) and 17 type 2 diabetic (T2D) human cadavers of matched sex, ethnic and age groups. The separation of ND from PD was done in terms of their measured HbA1c levels ($HbA1c < 5.9$ for ND and $5.9 \leq HbA1c \leq 6.4$ for PD). For T2D we considered the specific diagnosis on the donor chart/patient history. Several T2D donors were on medication and exhibited controlled levels of HbA1c (14 out of the 17 donors had $HbA1c \geq 6.4$). Cells from 12 donors had their RNA sequenced in multiple donor-specific or genetically multiplexed libraries. Specifically, each of the following islet pairs with IDs Islet70 (PD) / Islet71 (T2D), Islet84 (T2D) / Islet85 (PD) and Islet118 (PD) / Islet119 (T2D) were multiplexed twice (in two different libraries). On the other hand, the data of IDs Islet47 (ND) / Islet48 (T2D), Islet57 (ND) / Islet58 (PD) and Islet59 (ND) / Islet60 (T2D) were sequenced separately (a standalone library per ID) and in multiplex (a pair-specific library). As such, the data of our 48 donors spanned across 54 libraries. 
+
+We take a closer look at the islet characteristics by tabulating / plotting the clinical and demographic information of this study. We start by tabulating the categorical variables across conditions, i.e. sex, race, chemistry, center, medication (T2D only) and Cause Of Death against ND, PD and T2D:</div></div>
+
+```{r,democlinical1,eval = TRUE}
+########################
+# load the stored data #
+########################
+info<-read.table(paste(folder,"islet_info.txt",sep=""),sep="\t",header=T)
+head(info)
+
+###################################################################################
+# sex frequencies and fisher test for independence of rows and columns (matching) #
+###################################################################################
+table(info$Condition,info$Sex)
+fisher.test(table(info$Condition,info$Sex))
+
+####################################################################################
+# race frequencies and fisher test for independence of rows and columns (matching) #
+####################################################################################
+table(info$Condition,info$Race)
+fisher.test(table(info$Condition,info$Race))
+
+#########################
+# chemistry frequencies #
+#########################
+table(info$Condition,info$Chemistry)
+
+######################
+# center frequencies #
+######################
+table(info$Condition,info$Center)
+
+###################
+# COD frequencies #
+###################
+table(info$Condition,info$COD)
+
+########################################################
+# medication frequencies (T2D only, NR = Non-Reported) #
+########################################################
+table(info$Condition,info$Medication)
+```
+
+<div style="text-align: justify"> <div style="line-height: 2em"> We can also visualize the distribution of the continuous factors across conditions. First we checked the age distributions:</div></div>
+
+```{r,democlinical2,eval=TRUE,fig.cap='**Figure 1.1: Distribution of Age in ND, PD and T2D conditions.**',fig.pos='left',figure.height = 9, figure.width = 9,out.width = "9in"}
+#####################
+# make the age plot #
+#####################
+fig<-plot_ly(info,x=~Condition,y=~Age,type="box",boxpoints = "all", jitter = 0.3,color=~Condition)
+fig
+```
+
+
+<p>&nbsp;</p>
+
+
+<div style="text-align: justify"> <div style="line-height: 2em"> We tested for significant differences with ANOVA and Tukey's Honest Significant Differences (HSD) with Bonferroni correction. There were no significant age differences.</div></div>
+ 
+```{r,democlinical3,eval = TRUE}
+#######################
+# Tukey's HSD for Age #
+#######################
+mod<-aov(Age~Condition,data=info)
+TukeyHSD(mod, conf.level=.95)
+```
+
+
+<div style="text-align: justify"> <div style="line-height: 2em"> In the same way we plotted and tested for differences in BMI, HbA1c, Viability and Purity. For BMI:</div></div> 
+
+```{r,democlinical4,eval=TRUE,fig.cap='**Figure 1.2: Distribution of BMI in ND, PD and T2D conditions.**',fig.pos='left',figure.height = 9, figure.width = 9,out.width = "9in"}
+#####################
+# make the BMI plot #
+#####################
+fig<-plot_ly(info,x=~Condition,y=~BMI,type="box",boxpoints = "all", jitter = 0.3,color=~Condition)
+fig
+```
+
+
+<p>&nbsp;</p>
+
+
+```{r,democlinical5,eval = TRUE}
+#######################
+# Tukey's HSD for BMI #
+#######################
+mod<-aov(BMI~Condition,data=info)
+TukeyHSD(mod, conf.level=.95)
+```
+
+<div style="text-align: justify"> <div style="line-height: 2em"> For HbA1c:</div></div>
+
+```{r,democlinical6,eval=TRUE,fig.cap='**Figure 1.3: Distribution of HbA1c in ND, PD and T2D conditions.**',fig.pos='left',figure.height = 9, figure.width = 9,out.width = "9in"}
+#######################
+# make the HbA1c plot #
+#######################
+fig<-plot_ly(info,x=~Condition,y=~HbA1c,type="box",boxpoints = "all", jitter = 0.3,color=~Condition)
+fig
+```
+
+
+<p>&nbsp;</p>
+
+
+<div style="text-align: justify"> <div style="line-height: 2em"> Here, the homogeneity of variance assumption required in Tukey's HSD test is clearly not satisfied. The T2D group exhibited larger variance as a result of the medication. For this reason, we tested for differences using a standard t-test for unequal variances followed by Bonferroni adjustment of the p-values: </div></div>
+
+```{r,democlinical7,eval = TRUE}
+###############################
+# t-test of HbA1c in ND vs PD #
+###############################
+nd_vs_pd<-t.test(info$HbA1c[info$Condition=="ND"],info$HbA1c[info$Condition=="PD"])
+nd_vs_pd
+
+################################
+# t-test of HbA1c in ND vs T2D #
+################################
+nd_vs_t2d<-t.test(info$HbA1c[info$Condition=="ND"],info$HbA1c[info$Condition=="T2D"])
+nd_vs_t2d
+
+################################
+# t-test of HbA1c in PD vs T2D #
+################################
+pd_vs_t2d<-t.test(info$HbA1c[info$Condition=="PD"],info$HbA1c[info$Condition=="T2D"])
+pd_vs_t2d
+
+################################
+# Bonferroni adjusted p-values #
+################################
+p<-c(nd_vs_pd$p.value,nd_vs_t2d$p.value,pd_vs_t2d$p.value)
+p<-p.adjust(p,"bonferroni")
+names(p)<-c("NDvsPD","NDvsT2D","PDvsT2D")
+p
+```
+
+
+<div style="text-align: justify"> <div style="line-height: 2em"> For cell viability:</div></div>
+
+```{r,democlinical8,eval=TRUE,fig.cap='**Figure 1.4: Distribution of cell viability in ND, PD and T2D conditions.**',fig.pos='left',figure.height = 9, figure.width = 9,out.width = "9in"}
+###########################
+# make the Viability plot #
+###########################
+fig<-plot_ly(info,x=~Condition,y=~Viability,type="box",boxpoints = "all", jitter = 0.3,color=~Condition)
+fig
+```
+
+
+<p>&nbsp;</p>
+
+
+```{r,democlinical9,eval = TRUE}
+############################# 
+# Tukey's HSD for Viability #
+#############################
+mod<-aov(Viability~Condition,data=info)
+TukeyHSD(mod, conf.level=.95)
+```
+
+<div style="text-align: justify"> <div style="line-height: 2em"> For cell purity:</div></div>
+
+```{r,democlinical10,eval=TRUE,fig.cap='**Figure 1.5: Distribution of cell purity in ND, PD and T2D conditions.**',fig.pos='left',figure.height = 9, figure.width = 9,out.width = "9in"}
+########################
+# make the Purity plot #
+########################
+fig<-plot_ly(info,x=~Condition,y=~Purity,type="box",boxpoints = "all", jitter = 0.3,color=~Condition)
+fig
+```
+
+
+<p>&nbsp;</p>
+
+
+```{r,democlinical11,eval = TRUE}
+##########################
+# Tukey's HSD for Purity #
+##########################
+mod<-aov(Purity~Condition,data=info)
+TukeyHSD(mod, conf.level=.95)
+```
+
+### 1.3. Step-by-Step Pipeline for Single-cell RNA-seq Data Processing 
+
+<div style="text-align: justify"> <div style="line-height: 2em"> We employed the multi-step quality control pipeline, described in the following paragraphs, to clean and analyze our heterogeneous dataset. We performed read alignment and gene quantification with STARsolo giving us a starting set of 414,082 cell-containing droplets. Working with each library separately, we decontaminated the ambient RNA with SoupX and, where needed, we deconvoluted the donor information with Demuxlet using estimated donor-specific SNPs from the genotype information. We estimated homotypic (different cell types) doublets by Scrublet and DoubletFinder and used a multi-criteria quality control approach considering features, UMIs, percentage of reads mapped to the mitochondrial genome and markers analysis to filter out low-quality cells.
+
+The high-quality cells were merged, integrated with Harmony, cleaned further for doublets and annotated using well known and estimated markers from differential expression analysis. Focusing on the donor variability, we converted the heterogeneous single-cell RNA-seq into pseudobulk raw counts that were fed into a differential expression analysis model to compare, for each cell type, the three disease states, ND vs PD s T2D, across donors (replicates). Further insights into the differences across the three disease states were gained via cell type subclustering and subsequent differential expression at the single-cell level.</div></div>     
+
+### 1.4. Data availability
+
+<div style="text-align: justify"> <div style="line-height: 2em"> The raw fastq data, the processed STARsolo data (filtered barcodes.tsv, features.tsv and matrix.mtx) and the Seurat objects of the merged and integrated data (in .rds format) have been deposited in GEO under **[GEO id here]**. Due to data size limitations, this document uses mainly summarized versions of the original data to describe the analysis and the characteristics of this rich information. We provide the analytic and annotated code to create the summary tables and model estimates, and all informative plots that appear in our submitted work. This information along with the R libraries and functions used have been stored here at <https://github.com/ArisStefanosSn/Islets_Study>.</div></div>  
+
+
+<p>&nbsp;</p>
+
